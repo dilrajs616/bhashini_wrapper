@@ -49,18 +49,19 @@ def stt():
         service_id = response_json['pipelineResponseConfig'][0]['config'][0]['serviceId']
         api_key_name = response_json['pipelineInferenceAPIEndPoint']['inferenceApiKey']['name']
         api_key_value = response_json['pipelineInferenceAPIEndPoint']['inferenceApiKey']['value']
-        
-        print("Callback URL:", callback_url)
-        print("Service ID:", service_id)
-        print("API Key Name:", api_key_name)
-        print("API Key Value:", api_key_value)
 
-        if 'audio' not in request.files:
-            return jsonify({'error': 'No audio file found'}), 400
-        
-        audio_file = request.files['audio']
-        audio_data = audio_file.read()
-        audio_base64 = base64.b64encode(audio_data).decode('utf-8')
+        print("CallBack:", callback_url)
+        print("service id:", service_id)
+        print("key:", api_key_name)
+        print("value:", api_key_value)
+      
+        audio_file = request.files.get('audio')
+        if audio_file:
+            audio_data = audio_file.read()
+            base64_audio = base64.b64encode(audio_data).decode('utf-8')
+
+        if not base64_audio:
+            return jsonify({'error': 'No audio data provided'}), 400
 
         new_headers = {
             api_key_name: api_key_value
@@ -83,7 +84,7 @@ def stt():
             "inputData": {
                 "audio": [
                     {
-                        "audioContent": audio_base64             
+                        "audioContent": base64_audio            
                     }
                 ]
             }
@@ -97,7 +98,7 @@ def stt():
         return render_template('recording.html', text_data=source)
 
     except requests.exceptions.RequestException as e:
-        return f"An error occurred: {str(e)}", 500
+        return render_template('recording.html', text_data=f"{str(e)}")
 
 
 if __name__ == "__main__":
