@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speech Recognition Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+    #startButton {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+    }
+    #transcript {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <button id="startButton">Start Speech Recognition</button>
+    <div id="transcript"></div>
+  </div>
+
+  <script>
+    if ('webkitSpeechRecognition' in window) {
+      const recognition = new webkitSpeechRecognition();
+
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('transcript').textContent = 'You said: ' + transcript;
+      };
+
+      recognition.onerror = function(event) {
+        console.error('Error occurred in recognition: ', event.error);
+      };
+
+      document.getElementById('startButton').addEventListener('click', () => {
+        recognition.start();
+        console.log('Speech recognition started.');
+      });
+    } else {
+      alert('Speech recognition not supported in this browser.');
+    }
+  </script>
+</body>
+</html>

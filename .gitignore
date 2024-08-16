@@ -1,0 +1,6 @@
+__pycache__
+.venv
+*.pyc
+audio.txt
+bhashini_details.json
+.env
